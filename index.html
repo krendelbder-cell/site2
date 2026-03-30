@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>EMBERESSED | ADMIN PANEL</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap');
+        body { background: #050508; color: white; font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        .card { width: 350px; background: #0d0d12; padding: 30px; border-radius: 24px; border: 1px solid #ff4444; text-align: center; box-shadow: 0 10px 30px rgba(255, 68, 68, 0.1); }
+        h2 { color: #ff4444; letter-spacing: 2px; margin-bottom: 20px; text-transform: uppercase; }
+        select { width: 100%; padding: 14px; background: #000; border: 1px solid #333; border-radius: 12px; color: white; margin-bottom: 15px; outline: none; cursor: pointer; }
+        button { width: 100%; padding: 16px; border: none; border-radius: 12px; background: #ff4444; color: white; font-weight: 900; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
+        button:hover { background: #cc3333; transform: scale(1.02); }
+        .log-box { margin-top: 20px; text-align: left; border-top: 1px solid #222; padding-top: 15px; }
+        .log-title { font-size: 10px; color: #555; margin-bottom: 5px; font-weight: 800; }
+        #logs { font-size: 11px; color: #888; max-height: 120px; overflow-y: auto; font-family: monospace; }
+        .log-item { margin-bottom: 4px; padding: 4px; border-bottom: 1px solid #16161a; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Admin Gen</h2>
+        <select id="time">
+            <option value="1">1 Час (1 Hour)</option>
+            <option value="12">12 Часов (12 Hours)</option>
+            <option value="24">1 День (24 Hours)</option>
+            <option value="168">1 Неделя (1 Week)</option>
+            <option value="87600">Lifetime</option>
+        </select>
+        <button onclick="createPromo()">Создать Промокод</button>
+        
+        <div class="log-box">
+            <div class="log-title">ИСТОРИЯ СОЗДАНИЯ:</div>
+            <div id="logs"></div>
+        </div>
+    </div>
+
+    <script>
+        function createPromo() {
+            const hours = document.getElementById('time').value;
+            // Генерируем промокод вида EMB-XXXXX
+            const code = "EMB-" + Math.random().toString(36).substring(2, 7).toUpperCase();
+            
+            // Сохраняем в ОБЩУЮ базу EMBERESSED_DB
+            let db = JSON.parse(localStorage.getItem('EMBERESSED_DB') || "[]");
+            db.push({ code: code, h: parseInt(hours) });
+            localStorage.setItem('EMBERESSED_DB', JSON.stringify(db));
+
+            // Логи в интерфейсе
+            const logDiv = document.getElementById('logs');
+            logDiv.innerHTML = `<div class="log-item"><b>${code}</b> - ${hours}ч. создано</div>` + logDiv.innerHTML;
+            
+            // Копируем в буфер
+            navigator.clipboard.writeText(code);
+            alert("Промокод " + code + " создан и скопирован!");
+        }
+    </script>
+</body>
+</html>
